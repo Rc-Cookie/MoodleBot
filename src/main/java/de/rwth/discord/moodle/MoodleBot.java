@@ -11,6 +11,7 @@ import javax.security.auth.login.LoginException;
 import com.github.rccookie.util.Args;
 import com.github.rccookie.util.ArgsParser;
 import com.github.rccookie.util.Console;
+import com.github.rccookie.util.Utils;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -51,8 +52,8 @@ public class MoodleBot extends AbstractMoodleBot {
     public MoodleBot(long channelID, int interval, int... courses) throws LoginException, InterruptedException {
         super(interval, courses);
 
-        //noinspection SpellCheckingInspection
-        jda = JDABuilder.createLight("OTgzMjc3NTcwMjEwNTYyMTEw.GB2GOg.HmZiN5SbcW9ZsLmOeq3_1_1KQSL9tWMs4-62x0")
+        //noinspection ConstantConditions
+        jda = JDABuilder.createLight(Utils.readAll(MoodleBot.class.getClassLoader().getResourceAsStream("bot.token")))
                 .build().awaitReady();
         channel = jda.getChannelById(MessageChannel.class, channelID);
         if(channel == null) throw new IllegalArgumentException("Channel not found: " + channelID);
@@ -100,7 +101,7 @@ public class MoodleBot extends AbstractMoodleBot {
             embed.addField(new MessageEmbed.Field(file.name, file.getMarkdownDescription(), false));
 
         List<MessageAction> actions = new ArrayList<>();
-        actions.add(channel.sendMessage("<@&" + SubscriptionManager.getMoodleRole(guild) + ">").setEmbeds(embed.build()));
+        actions.add(channel.sendMessage("<@&" + SubscriptionManager.getMoodleRole(guild).getId() + ">").setEmbeds(embed.build()));
 
         if(uploadFiles) {
             int currentSize = 8000000;
